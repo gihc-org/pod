@@ -1,0 +1,43 @@
+<div class="subs-page">
+  <div class="subs-header">
+    <h1>Mine Podcasts</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="spinner"></span>
+      Henter abonnementer...
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-banner">{{ error() }}</div>
+  }
+
+  @if (!loading() && subscriptions().length === 0 && !error()) {
+    <div class="empty-state">
+      <p>Du har ingen abonnementer endnu.</p>
+      <a routerLink="/search" class="search-link">Søg efter podcasts</a>
+    </div>
+  }
+
+  @if (subscriptions().length > 0) {
+    <ul class="subs-list">
+      @for (sub of subscriptions(); track sub.id) {
+        <li class="podcast-card">
+          <img
+            class="podcast-artwork"
+            [src]="sub.image"
+            [alt]="sub.title"
+            (error)="$any($event.target).src='assets/podcast-placeholder.svg'"
+          />
+          <div class="podcast-info">
+            <h2 class="podcast-title">{{ sub.title }}</h2>
+            <p class="podcast-author">{{ sub.author }}</p>
+          </div>
+          <button class="unsub-btn" (click)="unsubscribe(sub)">Fjern</button>
+        </li>
+      }
+    </ul>
+  }
+</div>
