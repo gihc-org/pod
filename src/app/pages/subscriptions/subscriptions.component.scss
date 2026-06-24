@@ -1,7 +1,7 @@
 .subs-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 1rem 6rem;
 }
 
 .subs-header h1 {
@@ -53,7 +53,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .podcast-card {
@@ -64,6 +64,13 @@
   border-radius: 12px;
   padding: 0.875rem;
   border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  }
 }
 
 .podcast-artwork {
@@ -96,21 +103,36 @@
   margin: 0;
 }
 
-.unsub-btn {
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   flex-shrink: 0;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  border: 2px solid #ef4444;
+}
+
+.episodes-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.unsub-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
   background: transparent;
-  color: #ef4444;
-  font-size: 0.875rem;
-  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.75rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.15s;
 
   &:hover {
-    background: #ef4444;
-    color: #fff;
+    border-color: #ef4444;
+    color: #ef4444;
+    background: color-mix(in srgb, #ef4444 10%, transparent);
   }
 }
 

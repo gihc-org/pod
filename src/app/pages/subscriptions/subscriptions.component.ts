@@ -1,6 +1,6 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PodcastService } from '../../services/podcast.service';
 import { Podcast } from '../../models/podcast.model';
 
@@ -12,6 +12,7 @@ import { Podcast } from '../../models/podcast.model';
 })
 export class SubscriptionsComponent implements OnInit {
   private podcastService = inject(PodcastService);
+  private router = inject(Router);
 
   subscriptions = signal<Podcast[]>([]);
   loading = signal(true);
@@ -30,7 +31,12 @@ export class SubscriptionsComponent implements OnInit {
     });
   }
 
-  unsubscribe(podcast: Podcast) {
+  openEpisodes(podcast: Podcast) {
+    this.router.navigate(['/episodes'], { queryParams: { feed: podcast.feedUrl } });
+  }
+
+  unsubscribe(event: Event, podcast: Podcast) {
+    event.stopPropagation();
     if (!podcast.id) return;
     this.podcastService.removeSubscription(podcast.id).subscribe({
       next: () => {

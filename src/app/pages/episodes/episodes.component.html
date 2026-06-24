@@ -1,0 +1,59 @@
+<div class="episodes-page">
+  <a class="back-link" routerLink="/subscriptions">← Mine Podcasts</a>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="spinner"></span> Henter episoder...
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-banner">{{ error() }}</div>
+  }
+
+  @if (podcast(); as pod) {
+    <div class="podcast-header">
+      <img class="header-art" [src]="pod.image" [alt]="pod.title"
+        (error)="$any($event.target).style.display='none'" />
+      <div class="header-info">
+        <h1>{{ pod.title }}</h1>
+        <p class="header-author">{{ pod.author }}</p>
+        @if (pod.description) {
+          <p class="header-desc">{{ pod.description }}</p>
+        }
+      </div>
+    </div>
+
+    <h2 class="episodes-heading">Episoder</h2>
+
+    @if (!pod.episodes?.length) {
+      <p class="empty-state">Ingen episoder fundet.</p>
+    }
+
+    <ul class="episodes-list">
+      @for (ep of pod.episodes; track ep.guid) {
+        <li class="episode-card" [class.active]="isPlaying(ep)">
+          <button class="play-btn" (click)="play(ep)" [attr.aria-label]="isPlaying(ep) ? 'Pause' : 'Afspil'">
+            @if (isPlaying(ep)) {
+              <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                <rect x="14" y="4" width="4" height="16" rx="1"/>
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            }
+          </button>
+          <div class="episode-info">
+            <p class="episode-title">{{ ep.title }}</p>
+            <div class="episode-meta">
+              @if (ep.pubDate) { <span>{{ formatDate(ep.pubDate) }}</span> }
+              @if (ep.duration) { <span class="sep">·</span><span>{{ ep.duration }}</span> }
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</div>

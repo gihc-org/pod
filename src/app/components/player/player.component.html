@@ -1,0 +1,52 @@
+<audio #audioEl
+  (timeupdate)="onTimeUpdate()"
+  (loadedmetadata)="onLoadedMetadata()"
+  (ended)="onEnded()"
+  preload="metadata">
+</audio>
+
+<div class="player-bar" [class.visible]="player.episode()">
+  <div class="seek-row">
+    <span class="time">{{ formatTime(currentTime()) }}</span>
+    <input
+      class="seek-bar"
+      type="range"
+      [value]="currentTime()"
+      [max]="duration() || 0"
+      step="1"
+      (mousedown)="onDragStart()"
+      (touchstart)="onDragStart()"
+      (input)="onDragMove($event)"
+      (change)="onDragEnd($event)"
+    />
+    <span class="time">{{ formatTime(duration()) }}</span>
+  </div>
+
+  <div class="controls-row">
+    <div class="episode-info">
+      @if (player.podcast(); as pod) {
+        <img class="player-art" [src]="pod.image" [alt]="pod.title"
+          (error)="$any($event.target).style.display='none'" />
+      }
+      <div class="episode-text">
+        <span class="episode-title">{{ player.episode()?.title }}</span>
+        <span class="podcast-name">{{ player.podcast()?.title }}</span>
+      </div>
+    </div>
+
+    <button class="play-pause-btn" (click)="player.togglePlay()" [attr.aria-label]="player.isPlaying() ? 'Pause' : 'Afspil'">
+      @if (player.isPlaying()) {
+        <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <rect x="6" y="4" width="4" height="16" rx="1"/>
+          <rect x="14" y="4" width="4" height="16" rx="1"/>
+        </svg>
+      } @else {
+        <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      }
+    </button>
+
+    <div class="spacer"></div>
+  </div>
+</div>

@@ -35,6 +35,25 @@ router.get('/search', async (req, res) => {
   }
 });
 
+function stripHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/&#\d+;/g, '').trim();
+}
+
+function formatDuration(raw) {
+  if (!raw) return '';
+  const s = Number(raw);
+  if (!isNaN(s) && String(raw).indexOf(':') === -1) {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = Math.floor(s % 60);
+    return h > 0
+      ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
+      : `${m}:${String(sec).padStart(2,'0')}`;
+  }
+  return String(raw);
+}
+
 // Fetch and parse RSS feed
 router.get('/feed', async (req, res) => {
   const feedUrl = req.query.url;
@@ -49,21 +68,21 @@ router.get('/feed', async (req, res) => {
     const channel = result.rss.channel;
 
     const podcast = {
-      title: channel.title,
-      description: channel.description,
+      title: stripHtml(channel.title),
+      description: stripHtml(channel.description),
       link: channel.link,
       image: channel.image?.url || channel['itunes:image']?.href || '',
-      author: channel['itunes:author'] || channel.author || '',
+      author: stripHtml(channel['itunes:author'] || channel.author || ''),
       episodes: []
     };
 
     if (channel.item) {
       const items = Array.isArray(channel.item) ? channel.item : [channel.item];
       podcast.episodes = items.map(item => ({
-        title: item.title,
-        description: item.description,
+        title: stripHtml(item.title),
+        description: stripHtml(item.description),
         pubDate: item.pubDate,
-        duration: item['itunes:duration'] || '',
+        duration: formatDuration(item['itunes:duration']),
         audioUrl: item.enclosure?.url || '',
         audioType: item.enclosure?.type || 'audio/mpeg',
         guid: item.guid?._ || item.guid || item.link
